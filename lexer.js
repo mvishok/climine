@@ -1,4 +1,4 @@
-const {error} = require('./mem');
+const { throwError } = require('./mem');
 function lexer(input){
     const keywords = ['if', 'else', 'let', ,'until', 'while', 'for', 'try', 'handle', 'define', 'return', 'include'];
     const operators = ['+', '-', '*', '/', '%', '**', '=', '>', '<', '==', '!=', '<=', '>=', '&&', '||', '!', '&'];
