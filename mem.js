@@ -1,6 +1,9 @@
 const { appendFileSync } = require('fs');
+const { dirname } = require('path');
 
-var variables = {};
+var variables = {
+    "PATH": {value: "dist\\" || dirname(process.execPath), type: "StringLiteral"},
+};
 var scope = {};
 var config = {
     scope: 'global',
