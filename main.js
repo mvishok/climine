@@ -3,10 +3,10 @@ const parser = require("./parser");
 const { def} = require("./core");
 const eval = require("./eval");
 const {readFileSync} = require('fs');
-const path = require('path');
+const { dirname } = require('path');
 var argv = require('minimist')(process.argv.slice(2));
-const { throwError, config, log, getVariable, scope } = require("./mem");
-const packages = JSON.parse(readFileSync(path.dirname(process.execPath)+'\\lib\\packages.json', "utf8"));
+const { throwError, config, log, getVariable, scope, setVariable } = require("./mem");
+const packages = JSON.parse(readFileSync("dist\\lib\\packages.json" || dirname(process.execPath)+'\\lib\\packages.json', "utf8"));
 
 const VERSION = "0.1.4";
 
@@ -36,6 +36,7 @@ async function boot(){
     if (argv['_'].length > 0) {
         log('Reading script: ' + argv['_'][0] + '\n\n');
         const filePath = argv['_'][0];
+        setVariable("CWD", dirname(filePath)+"\\", "StringLiteral");
         let fileContent;
         try {
             fileContent = readFileSync(filePath, "utf8").replace(/[\r\n]+/g, "");
@@ -45,6 +46,7 @@ async function boot(){
         config["mode"] = "script";
         start(fileContent);
     } else {
+        setVariable("CWD", dirname(process.execPath)+"\\", "StringLiteral");
         const latestVersion = await getVersion();
         if (latestVersion != VERSION){
             console.log("New version available:", latestVersion, "\nCheck it out at https://climine.vishok.tech/\n");
@@ -165,7 +167,7 @@ function main(ast) {
                     }
                     let filePath = statement["statement"][1].value;
                     if (Object.keys(packages[""]).includes(filePath)){
-                        filePath = "lib/"+packages[""][filePath].path;
+                        filePath = ("dist\\lib\\" || dirname(process.execPath)+'\\lib\\') +packages[""][filePath].path;
                     }
                     let fileContent;
                     try {
