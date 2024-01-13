@@ -4,7 +4,7 @@
   "description": "A simple programming language",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx ncc build clip.js -o dist && ren dist\\index.js cp.js && npx ncc build main.js -o dist && node script.js && npx pkg dist\\index.js -o dist\\climine.exe && npx pkg dist\\cp.js -o dist\\cp.exe && del dist\\index.js && del dist\\cp.js"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +15,10 @@
     "prompt-sync": "^4.2.0",
     "rcedit": "^4.0.1"
   },
-  "bin": "index.js",
+  "bin": {
+    "clip": "./dist/cp.js",
+    "climine": "./dist/index.js"
+  },
   "pkg": {
     "outputPath": "dist",
     "scripts": [
