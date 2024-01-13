@@ -2,32 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 const base64 = require('js-base64').Base64;
-const VERSION = "0.1.3";
-const packages = JSON.parse(fs.readFileSync("lib/packages.json"));
+const packages = JSON.parse(fs.readFileSync(path.dirname(process.execPath)+'\\lib\\packages.json', "utf8"));
 
 
 const axios = require('axios');
-async function getVersion() {
-    try {
-      const response = await axios.get('https://api.github.com/repos/mvishok/climine/releases/latest');
-      return response.data.tag_name;
-    } catch (error) {
-      console.error('Error fetching release tag:', error.message);
-      // Handle the error as needed
-      return null;
-    }
-}
-
-if (argv['v']){
-    console.log(VERSION);
-}
 
 async function boot(){
-    console.log("Climine Package Manager v"+VERSION);
-    const latestVersion = await getVersion();
-    if (latestVersion != VERSION){
-        console.log("New version available:", latestVersion, "\nCheck it out at https://clip.vishok.tech/\n");
-    }
 
     if (argv['i'] || argv['install']){
         let package = argv['i'] || argv['install'];
@@ -65,10 +45,10 @@ async function boot(){
         //download the repo
         try{
         let downloadUrl = "https://github.com/"+owner+"/"+repo+"/archive/master.zip";
-        let downloadPath = "./lib";
+        let downloadPath = path.dirname(process.execPath)+'\\lib';
         const download = require('download');
         name = await download(downloadUrl, downloadPath, {extract: true});
-        name[0].path = "./lib/"+name[0].path
+        name[0].path = path.dirname(process.execPath)+'\\lib\\'+name[0].path
         } catch (e){
             console.error("ERROR: Could not download package:", e);
             return;
@@ -77,13 +57,13 @@ async function boot(){
         
         try {
         console.log("Renaming to", json.name);
-        fs.renameSync(name[0].path, "./lib/"+json.name);
+        fs.renameSync(name[0].path, path.dirname(process.execPath)+'\\lib\\'+json.name);
         } catch (e){
             console.error("ERROR: Could not rename package:",e);
             return;
         }
         console.log("Setting package entry point to", json.entry);
-        const entry = json.name+"/"+json.entry;
+        const entry = json.name+"\\"+json.entry;
         console.log("Appending to lib/packages.json");
         packages[""][json.name] = {
             "name": json.name,
@@ -94,7 +74,7 @@ async function boot(){
             "path": entry,
         }
         try{
-        fs.writeFileSync("lib/packages.json", JSON.stringify(packages, null, 2));
+        fs.writeFileSync(path.dirname(process.execPath)+'\\lib\\packages.json', JSON.stringify(packages, null, 2));
         } catch (e){
             console.error("ERROR: Could not write to lib/packages.json:", e);
             return;
@@ -108,7 +88,7 @@ async function boot(){
             console.error("ERROR: Package not found");
             return;
         }
-        package = "./lib/"+package;
+        package = path.dirname(process.execPath)+'\\lib\\'+package;
         console.log("Removing", package);
         console.log("Deleting files...");
         try{
@@ -120,7 +100,7 @@ async function boot(){
         console.log("Removing from lib/packages.json");
         delete packages[""][package];
         try{
-        fs.writeFileSync("./lib/packages.json", JSON.stringify(packages, null, 2));
+        fs.writeFileSync(path.dirname(process.execPath)+'\\lib\\packages.json', JSON.stringify(packages, null, 2));
         } catch (e){
             console.error("ERROR: Could not write to lib/lib/packages.json");
             return;
