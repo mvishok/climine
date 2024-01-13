@@ -190,8 +190,8 @@ function len_(params) {
 function pop_(params) {
     const val = eval(params, def);
     const index = val[1];
-    const final = val[0].splice(index, 1);
-    return [final, "ArrayExpression"];
+    val[0].splice(index, 1);
+    return [val[0], "ArrayExpression"];
 }
 
 //to run os shell commands
@@ -205,7 +205,17 @@ function cmd_(params) {
     } catch (error) {
         return [`${error.message} (core)`, "StringLiteral"];
     }
+}
 
+function changecwd_(params) {
+    const val = eval(params, def);
+    try{
+        process.chdir(val);
+    } catch (err){
+        throwError(`Error: ${err} (core)`);
+    }
+    setVariable("cwd", val, "StringLiteral");
+    return [val, "NumberLiteral"];
 }
 
 function countParams(params){
@@ -261,6 +271,9 @@ const def = {
     },
     pop: function (params){
         return pop_(params);
+    },
+    changecwd: function (params){
+        return changecwd_(params);
     },
     cmd: function (params){
         return cmd_(params);
