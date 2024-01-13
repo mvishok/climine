@@ -129,14 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-test.cli
-log.txt
 package-lock.json
-cacheFolder
-script.js
-inc.cli
-climine.json
-lib/
-clip.exe
-index.js
-climine.exe
