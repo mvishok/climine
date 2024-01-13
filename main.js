@@ -3,9 +3,10 @@ const parser = require("./parser");
 const { def} = require("./core");
 const eval = require("./eval");
 const {readFileSync} = require('fs');
+const path = require('path');
 var argv = require('minimist')(process.argv.slice(2));
 const { throwError, config, log, getVariable, scope } = require("./mem");
-const packages = JSON.parse(readFileSync("lib/packages.json"));
+const packages = JSON.parse(readFileSync(path.dirname(process.execPath)+'\\lib\\packages.json', "utf8"));
 
 const VERSION = "0.1.4";
 
