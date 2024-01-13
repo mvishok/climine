@@ -1,4 +1,4 @@
-const { getVariable, throwError, config, log } = require('./mem');
+const { getVariable, throwError, log } = require('./mem');
 
 function eval(node, def) {
     if (node.length == 0) {
@@ -124,6 +124,10 @@ function eval(node, def) {
                 }
             } else {
                 variableValue = getVariable(node[i + 1].value);
+                //if is array, get first element
+                if (typeof variableValue == "object") {
+                    variableValue = variableValue[0];
+                }
                 if (variableValue === undefined) {
                     throwError(`Variable ${node[i + 1].value} is not defined (eval)`);
                     return undefined;
